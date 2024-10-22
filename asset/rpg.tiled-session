@@ -1,0 +1,32 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "rpg.tmj",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "rpg.tmj": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1461,
+                "y": 624.5
+            }
+        },
+        "rpg.tmj#all": {
+            "scaleInDock": 1
+        }
+    },
+    "last.imagePath": "D:/WorkSpace/vcwork/myc/workdev/test/asset",
+    "map.lastUsedFormat": "json",
+    "openFiles": [
+        "rpg.tmj"
+    ],
+    "project": "rpg.tiled-project",
+    "recentFiles": [
+        "rpg.tmj"
+    ],
+    "tileset.embedInMap": true
+}
