@@ -1,4 +1,5 @@
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,6 +36,45 @@ void ShowTiledInfo(cute_tiled_map_t* map)
     printf("Tiled Width: %d\n", map->tilesets->tilewidth);
     printf("Tiled Height: %d\n", map->tilesets->tileheight);
     printf("Total Tiles : %d\n", map->tilesets->tilecount);
+}
+void GenMapFile(Game* g)
+{
+    FILE* outf;
+    const char* fname = "tileMap.h";
+    outf = fopen(fname, "w");
+    if (outf == NULL) {
+        fprintf(stderr, "can't open %s for writing\n", fname);
+        return;
+    }
+    int mapWidth = g->map->width;
+    int mapHeight = g->map->height;
+    // define a Map layer struct ...
+    fprintf(outf, "typedef struct {\n\t");
+    fprintf(outf, "int width;\n\t");
+    fprintf(outf, "int height;\n\t");
+    fprintf(outf, "int tilesWidth;\n\t");
+    fprintf(outf, "int tilesHeight;\n\t");
+    fprintf(outf, "char *tilesImg;\n\t");
+    fprintf(outf, "char *layerData;\n");
+    fprintf(outf, "} MapLayer;\n");
+    // make an entity map level
+    fprintf(outf, "MapLayer mLevel = {\n\t");
+    fprintf(outf, ".width = %d,\n\t", mapWidth);
+    fprintf(outf, ".height = %d,\n\t", mapHeight);
+    fprintf(outf, ".tilesWidth = %d,\n\t", g->map->tilesets->tilewidth);
+    fprintf(outf, ".tilesHeight = %d,\n\t", g->map->tilesets->tileheight);
+    fprintf(outf, ".tilesImg = \"%s\",\n\t", g->map->tilesets->image.ptr);
+    fprintf(outf, ".layerData[%d] = {\n", mapWidth * mapHeight);
+    for (int j = 0; j < mapHeight; j++) {
+        fprintf(outf, "\t\t");
+        for (int i = 0; i < mapWidth; i++) {
+            fprintf(outf, "0x%.2X,", (g->map->layers->data[j * mapWidth + i] - 1) & 0xff);
+        }
+        fprintf(outf, "\n");
+    }
+    fprintf(outf, "\t},\n");
+    fprintf(outf, "};\n");
+    fclose(outf);
 }
 
 float Clamp(float value, float min, float max)
@@ -93,7 +133,7 @@ void DrawMap(Game* g)
     int mapHeight = g->map->height;
     for (int j = 0; j < mapHeight; j++) {
         for (int i = 0; i < mapWidth; i++) {
-            DrawTile(g, i, j, g->map->layers->data[j * mapWidth + i]);
+            DrawTile(g, i, j, g->map->layers->data[j * mapWidth + i] - 1);
         }
     }
 }
@@ -115,7 +155,7 @@ bool InitGame(Game* g)
     g->camera.offset = (Vector2) { (float)SCREEN_WIDTH / 2, (float)SCREEN_HEIGHT / 2 };
     g->camera.rotation = 0.0f;
     g->camera.zoom = 1.0f;
-    g->map = cute_tiled_load_map_from_file("asset/rpg.tmj", NULL);
+    g->map = cute_tiled_load_map_from_file("asset/ggy.tmj", NULL);
     if (!g->map) {
         printf("Cannot load map\n");
         return false;
@@ -135,6 +175,7 @@ int main(int argc, char** argv)
     SetTargetFPS(60);
     Game game;
     InitGame(&game);
+    GenMapFile(&game);
     while (!WindowShouldClose()) {
         UpdateInput(&game);
         BeginDrawing();

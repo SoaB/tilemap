@@ -1,3 +1,0 @@
-OGA page: http://opengameart.org/content/dungeon-crawl-32x32-tiles, 
-the crawl-tiles page: http://code.google.com/p/crawl-tiles/ or 
-see the License Notice instructions on http://rltiles.sourceforge.net/
